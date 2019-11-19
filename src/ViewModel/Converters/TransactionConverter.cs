@@ -8,9 +8,9 @@ namespace Money_App.ViewModel.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            string value = (string)values[0];
-            string title = (string)values[1];
-            string category = (string)values[2];
+            string value = values[0] as string;
+            string title = values[1] as string;
+            string category = values[2] as string;
 
             decimal dvalue;
             if (!string.IsNullOrWhiteSpace(value) && decimal.TryParse(value, out dvalue))
