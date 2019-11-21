@@ -12,15 +12,8 @@ namespace Money_App.ViewModel
         public ObservableCollection<string> CategoriesList { get; }
             = new ObservableCollection<string>();
 
-        public Categories()
-        {
-            model_categories.Add("Smoking");
-            model_categories.Add("Food");
-            model_categories.Add("Entertainment");
-            model_categories.Add("Salary");
-            model_categories.Add("Other");
-            CopyFromModel();
-        }
+        public Categories() 
+            => CopyFromModel();
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(params string[] names)
