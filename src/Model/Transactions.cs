@@ -8,6 +8,7 @@ namespace Money_App.Model
     public class Transactions : IEnumerable<Transaction>, IDisposable
     {
         private List<Transaction> transactions = new List<Transaction>();
+        public Categories Categories = new Categories();
 
         public Transactions() 
             => Load();

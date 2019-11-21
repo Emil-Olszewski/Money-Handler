@@ -134,8 +134,8 @@
                             <!-- Category -->
                             <StackPanel Grid.Column="1" Margin="10 0">
                                 <Label Content="Category" Foreground="Black"/>
-                                <ComboBox x:Name="cbCategory" DataContext="{StaticResource Categories}" 
-                                      ItemsSource="{Binding CategoriesList, Mode=OneWay}" Height="25" SelectedItem="{Binding ElementName=lbTransactions, Path=SelectedItem.Category, Mode=OneWay}"/>
+                                <ComboBox x:Name="cbCategory" 
+                                    ItemsSource="{Binding CategoriesList, Mode=OneWay}" Height="25" SelectedItem="{Binding ElementName=lbTransactions, Path=SelectedItem.Category, Mode=OneWay}"/>
                             </StackPanel>
 
                             <!-- Edit Button -->
@@ -198,7 +198,7 @@
             <TabItem Header="Categories">
                 <GroupBox Header="Edit Categories" Margin="10, 0, 10, 10" MinWidth="420" 
                   Height="180" VerticalAlignment="Bottom" Foreground="Black" BorderBrush="#FFD1D1D1">
-                    <StackPanel DataContext="{StaticResource Categories}">
+                    <StackPanel>
 
                         <!-- Add Category -->
                         <Grid>

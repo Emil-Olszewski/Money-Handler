@@ -7,10 +7,10 @@ namespace Money_App.ViewModel.Commands
 {
     public class EditCategoryCommand : ICommand
     {
-        private readonly Categories categories;
+        private readonly Transactions transactions;
 
-        public EditCategoryCommand(Categories categories)
-            => this.categories = categories;
+        public EditCategoryCommand(Transactions transactions)
+            => this.transactions = transactions;
 
         public event EventHandler CanExecuteChanged
         {
@@ -29,8 +29,9 @@ namespace Money_App.ViewModel.Commands
         public void Execute(object parameter)
         {
             var edited = parameter as EditedCategory;
-            int index = categories.CategoriesList.IndexOf(edited.OldName);
-            categories.CategoriesList[index] = edited.NewName;
+            int index = transactions.CategoriesList.IndexOf(edited.OldName);
+            transactions.CategoriesList[index] = edited.NewName;
+            transactions.EditCategories(edited.OldName, edited.NewName);
         }
     }
 }

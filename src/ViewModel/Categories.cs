@@ -7,13 +7,16 @@ namespace Money_App.ViewModel
 {
     public class Categories : INotifyPropertyChanged
     {
-        private readonly Model.Categories model_categories = new Model.Categories();
+        private readonly Model.Categories model_categories;
 
         public ObservableCollection<string> CategoriesList { get; }
             = new ObservableCollection<string>();
 
-        public Categories() 
-            => CopyFromModel();
+        public Categories(Model.Categories categories)
+        {
+            model_categories = categories;
+            CopyFromModel();
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(params string[] names)
@@ -25,11 +28,7 @@ namespace Money_App.ViewModel
         private AddCategoryCommand addCategory;
         public AddCategoryCommand AddCategory
             => addCategory?? (addCategory = new AddCategoryCommand(this));
-
-        private EditCategoryCommand editCategory;
-        public EditCategoryCommand EditCategory
-            => editCategory ?? (editCategory = new EditCategoryCommand(this));
-
+    
         private DeleteCategoryCommand deleteCategory;
         public DeleteCategoryCommand DeleteCategory
             => deleteCategory ?? (deleteCategory = new DeleteCategoryCommand(this));

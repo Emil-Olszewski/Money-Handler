@@ -10,8 +10,9 @@ namespace Money_App.ViewModel
     public class Transactions : INotifyPropertyChanged
     {
         private readonly Model.Transactions model_transactions;
+        public Categories Categories { get; private set; }
 
-        public ObservableCollection<Transaction> TransactionsList { get; }
+        public ObservableCollection<Transaction> TransactionsList { get; private set; }
             = new ObservableCollection<Transaction>();
 
         public class Deleted
@@ -51,9 +52,13 @@ namespace Money_App.ViewModel
         public decimal SavedMoneyPercent
             => model_transactions.CountSavedMoneyPercent();
 
+        public ObservableCollection<string> CategoriesList
+            => Categories.CategoriesList;
+
         public Transactions()
         {
             model_transactions = new Model.Transactions();
+            Categories = new Categories(model_transactions.Categories);
             CopyFromModel();
         }
 
@@ -88,6 +93,23 @@ namespace Money_App.ViewModel
         private MoveTransactionDownCommand moveTransactionDown;
         public MoveTransactionDownCommand MoveTransactionDown
             => moveTransactionDown ?? (moveTransactionDown = new MoveTransactionDownCommand(this));
+
+        public AddCategoryCommand AddCategory
+            => Categories.AddCategory;
+
+        private EditCategoryCommand editCategory;
+        public EditCategoryCommand EditCategory
+            => editCategory ?? (editCategory = new EditCategoryCommand(this));
+
+        public DeleteCategoryCommand DeleteCategory
+            => Categories.DeleteCategory;
+
+        public void EditCategories(string from, string to)
+        {
+            foreach (var transaction in TransactionsList)
+                if (transaction.Category == from)
+                    transaction.EditCategory(to);
+        }
 
         private void CopyFromModel()
         {

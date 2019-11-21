@@ -2,7 +2,7 @@
 {
     public class Transaction
     {
-        private readonly Model.Transaction model_transaction;
+        private Model.Transaction model_transaction;
 
         public decimal Value
             => model_transaction.Value;
@@ -21,6 +21,9 @@
 
         public Model.Transaction GetModel()
             => model_transaction;
+
+        public void EditCategory(string newCategory)
+            => model_transaction.Category = newCategory;
 
         public static bool Verify(Transaction t)
             => t != null && t.Value != 0 && !string.IsNullOrWhiteSpace(t.Title) 
