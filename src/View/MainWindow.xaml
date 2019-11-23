@@ -7,14 +7,13 @@
         xmlns:c="clr-namespace:Money_App.ViewModel.Converters"
         xmlns:db="clr-namespace:Money_App.View.DialogBox"
         mc:Ignorable="d"
-        Title="MainWindow" Height="782" Width="650" Background="White">
+        Title="Money Handler" Height="782" Width="650" Background="White">
 
     <Window.DataContext>
         <vm:Transactions/>
     </Window.DataContext>
 
     <Window.Resources>
-        <vm:Categories x:Key="Categories"/>
         <c:TransactionConverter x:Key="TransactionConverter"/>
         <c:ValueToBrushConverter x:Key="ValueToBrushConverter"/>
         <c:SelectedTransactionConverter x:Key="SelectedTransactionConverter"/>
@@ -57,11 +56,11 @@
             </Grid.ColumnDefinitions>
 
             <!-- Move up button -->
-            <Button Margin ="10 10 10 0" Height="25" Content="Move Up (T)" Grid.Column="0" 
+            <Button Margin ="10 10 10 0" Height="25" Content="Move Up (CTRL+T)" Grid.Column="0" 
                     Command="{Binding MoveTransactionUp}" CommandParameter="{Binding ElementName=lbTransactions, Path=SelectedIndex}"/>
 
             <!-- Move down button-->
-            <Button Margin ="10 10 10 0" Height="25" Content="Move Down (Y)" Grid.Column="1" 
+            <Button Margin ="10 10 10 0" Height="25" Content="Move Down (CTRL+Y)" Grid.Column="1" 
                     Command="{Binding MoveTransactionDown}" CommandParameter="{Binding ElementName=lbTransactions, Path=SelectedIndex}"/>
         </Grid>
 
@@ -109,9 +108,9 @@
         </StackPanel>
 
         <TabControl BorderThickness="0 1 0 0">
-            <TabItem Header="Transactions" MinHeight="25">
+            <TabItem Header="Transactions" MinHeight="25" HorizontalAlignment="Left" Width="81">
                 <GroupBox Header="New Transaction" Margin="10, 0, 10, 10" MinWidth="420" VerticalAlignment="Bottom" Foreground="Black" BorderBrush="#FFD1D1D1">
-                    <StackPanel>
+                    <StackPanel Margin="10 0">
 
                         <!-- Title -->
                         <Label Content="Title" Background="{x:Null}" Foreground="Black"/>
@@ -183,11 +182,11 @@
                             CommandYes="{Binding Path=RemoveTransaction}" 
                             CommandParameter="{Binding ElementName=lbTransactions, Path=SelectedIndex}"/>
 
-                            <Button Margin="0 0 10 0" x:Name="bDeleteTransaction"  Content="Delete Transaction (Del)"  Height="25" Grid.Column="0"
+                            <Button Margin="0 0 10 0" x:Name="bDeleteTransaction"  Content="Delete Transaction (CTRL+Del)"  Height="25" Grid.Column="0"
                                  Command="{Binding ElementName=questionYesNo, Path=Show}" CommandParameter="Are you sure you want to delete the transaction?"/>
 
                             <!-- Restore Transaction -->
-                            <Button Margin="0 0 10 0" x:Name="bRestoreTransaction"  Content="Restore (Ctrl+Z)"  Height="25" Grid.Column="1"
+                            <Button Margin="0 0 10 0" x:Name="bRestoreTransaction"  Content="Restore (CTRL+Z)"  Height="25" Grid.Column="1"
                                 Command="{Binding Path=RestoreTransaction}"/>
                         </Grid>
 
@@ -250,7 +249,7 @@
 
                             <StackPanel Grid.Column="1">
                                 <Label Content="New name"/>
-                                <TextBox x:Name="tbEditedCategory" Height="25"/>
+                                <TextBox x:Name="tbEditedCategory" Height="25" Margin="0,0,10,0"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="2" VerticalAlignment="Bottom" Margin="10 0">
@@ -269,6 +268,91 @@
                     </StackPanel>
                 </GroupBox>
             </TabItem>
+            
+           <!-- Stats-->
+            <TabItem Header="Statistics">
+                <StackPanel Margin="50 40">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                        <Label Content="Income:" FontSize="20" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Income, Mode=OneWay, StringFormat={}{0:n2} €}" FontSize="36"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                        <Label Content="Expenses:" FontSize="20" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding Expenses, Mode=OneWay, StringFormat={}{0:n2} €}" FontSize="36"/>
+                    </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            
+            <!-- Top Expenses -->
+            <TabItem Header="Top Expenses" >
+                <StackPanel Margin="5,10,5,0">
+
+                    <ListBox ItemsSource="{Binding SortedValuableCategories, Mode=OneWay}" Height="155" BorderBrush="{x:Null}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                
+                                <Grid Width="580" HorizontalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Label Content="{Binding Name, Mode=OneWay}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <ProgressBar Height="20" Value="{Binding PercentOfWhole, Mode=OneWay}"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Value, Mode=OneWay, StringFormat={}{0:n2} €}"/>
+                                    </StackPanel>
+                                    
+                                </Grid>
+                                
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Margin" Value="0 0"/>
+                                <Setter Property="Height" Value="30"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                
+                                <!-- Remove hover color -->
+                                <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter 
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                Content="{TemplateBinding Content}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                Margin="{TemplateBinding Padding}">
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                                </Setter>
+                                
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        
+                    </ListBox>
+
+                </StackPanel>
+            </TabItem>
+
         </TabControl>
 
     </StackPanel>

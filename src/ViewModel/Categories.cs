@@ -1,4 +1,5 @@
 ﻿using Money_App.ViewModel.Commands;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -71,6 +72,48 @@ namespace Money_App.ViewModel
             {
                 OldName = old;
                 NewName = @new;
+            }
+        }
+
+        public class ValuableCategory
+        {
+            public decimal Value { get; private set; }
+            public string Name { get; private set; }
+            public decimal PercentOfWhole
+                => Value / TotalValue * 100;
+
+            public static decimal TotalValue { get; set; } = 0;
+
+            public ValuableCategory(decimal value, string name)
+            {
+                Value = value;
+                Name = name;
+            }
+
+            public static void SortDescending(ObservableCollection<ValuableCategory> categories)
+            {
+                bool change;
+                do
+                {
+                    change = false;
+                    for(int i=1; i<categories.Count; i++)
+                    {
+                        if(categories[i].Value == 0)
+                        {
+                            categories.RemoveAt(i);
+                            continue;
+                        }
+
+                        if(categories[i].Value < categories[i-1].Value)
+                        {
+                            var temp = categories[i];
+                            categories[i] = categories[i - 1];
+                            categories[i - 1] = temp;
+                            change = true;
+                        }
+                    }
+
+                } while (change == true);
             }
         }
     }

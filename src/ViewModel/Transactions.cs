@@ -52,6 +52,13 @@ namespace Money_App.ViewModel
         public decimal SavedMoneyPercent
             => model_transactions.CountSavedMoneyPercent();
 
+        public decimal Income
+            => model_transactions.CountIncome();
+
+        public decimal Expenses
+            => model_transactions.CountExpenses();
+
+
         public ObservableCollection<string> CategoriesList
             => Categories.CategoriesList;
 
@@ -60,6 +67,25 @@ namespace Money_App.ViewModel
             model_transactions = new Model.Transactions();
             Categories = new Categories(model_transactions.Categories);
             CopyFromModel();
+            RefreshValuableCategories();
+        }
+
+        public ObservableCollection<Categories.ValuableCategory> SortedValuableCategories { get; private set; }
+            = new ObservableCollection<Categories.ValuableCategory>();
+
+        public void RefreshValuableCategories()
+        {
+            SortedValuableCategories.Clear();
+            Categories.ValuableCategory.TotalValue = 0;
+            foreach(var category in CategoriesList)
+            {
+                var balance = model_transactions.CountExpenses(category);
+                Categories.ValuableCategory.TotalValue += balance;
+                var sorted = new Categories.ValuableCategory(balance, category);
+                SortedValuableCategories.Add(sorted);
+            }
+
+            Categories.ValuableCategory.SortDescending(SortedValuableCategories);
         }
 
         private AddTransactionCommand addTransaction;
@@ -109,6 +135,8 @@ namespace Money_App.ViewModel
             foreach (var transaction in TransactionsList)
                 if (transaction.Category == from)
                     transaction.EditCategory(to);
+
+            Update();
         }
 
         private void CopyFromModel()
@@ -156,7 +184,10 @@ namespace Money_App.ViewModel
         }
 
         public void Update()
-            => OnPropertyChanged("TransactionsList", "Balance", "SavedMoneyPercent");
+        {
+            RefreshValuableCategories();
+            OnPropertyChanged("TransactionsList", "Balance", "SavedMoneyPercent", "SortedValuableCategories", "Income", "Expenses");
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(params string[] names)
