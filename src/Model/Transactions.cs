@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 namespace Money_App.Model
 {
-    public class Transactions : IEnumerable<Transaction>, IDisposable
-    {
+    public class Transactions : IEnumerable<Transaction>
+    { 
         private List<Transaction> transactions = new List<Transaction>();
         public Categories Categories = new Categories();
 
         public Transactions() 
             => Load();
 
-        public void Dispose()
+        ~Transactions()
             => Save();
 
         public void Add(Transaction t)
@@ -58,15 +58,31 @@ namespace Money_App.Model
 
         public decimal CountSavedMoneyPercent()
         {
-            decimal profit = 0;
-            foreach (var t in transactions)
-                if (t.Value > 0)
-                    profit += t.Value;
-
-            if (profit > 0)
-                return (CountBalance() / profit) * 100;
+            var income = CountIncome();
+            if (income > 0)
+                return (CountBalance() / income) * 100;
             else
                 return 0;
+        }
+
+        public decimal CountIncome(string category = null)
+        {
+            decimal income = 0;
+            foreach (var t in transactions)
+                if (t.Value > 0 && (category == null || (category != null && t.Category == category)))
+                    income += t.Value;
+
+            return income;
+        }
+
+        public decimal CountExpenses(string category = null)
+        {
+            decimal expenses = 0;
+            foreach (var t in transactions)
+                if (t.Value < 0 && (category == null || (category != null && t.Category == category)))
+                        expenses += t.Value;
+
+            return expenses;
         }
 
         public Transaction this[int index]
@@ -78,8 +94,11 @@ namespace Money_App.Model
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
 
-        public void Save() 
-            => SaveManager.SaveTransactions(transactions, "save.dat");
+        public void Save()
+        {
+            SaveManager.SaveTransactions(transactions, "save.dat");
+            SaveManager.SaveTransactions(transactions, "copy_save.dat");
+        }
 
         public void Load()
             => transactions = SaveManager.LoadTransactions("save.dat") ?? transactions;       
